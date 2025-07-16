@@ -1,0 +1,145 @@
+import Vehicle from "../models/vehicle.Model.js"
+import Booking from "../models/booking.Model.js";
+
+
+export const addVehicle = async (req, res) => {
+  try {
+    const { error } = validateVehicle(req.body);
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        details: error.details[0].message
+      });
+    }
+
+    const { name, capacityKg, tyres } = req.body;
+
+    const vehicle = new Vehicle({
+      name,
+      capacityKg,
+      tyres
+    });
+
+    const savedVehicle = await vehicle.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Vehicle added successfully',
+      data: savedVehicle
+    });
+  } catch (error) {
+    console.error('Error adding vehicle:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+
+export const getAvailableVehicles = async (req, res) => {
+  try {
+
+    const { capacityRequired, fromPincode, toPincode, startTime } = req.query;
+
+    // Calculate estimated ride duration
+    const estimatedRideDurationHours = calculateRideDuration(fromPincode, toPincode);
+    
+    // Calculate end time
+    const startDateTime = new Date(startTime);
+    const endDateTime = new Date(startDateTime.getTime() + (estimatedRideDurationHours * 60 * 60 * 1000));
+
+    // Find vehicles with sufficient capacity
+    const vehiclesWithCapacity = await Vehicle.find({
+      capacityKg: { $gte: parseInt(capacityRequired) }
+    });
+
+    // Filter out vehicles with overlapping bookings
+    const availableVehicles = [];
+
+    for (const vehicle of vehiclesWithCapacity) {
+      // Get all bookings for this vehicle
+      const existingBookings = await Booking.find({
+        vehicleId: vehicle._id
+      });
+
+      // Check if any booking overlaps with the requested time window
+      const hasOverlap = existingBookings.some(booking => 
+        checkTimeOverlap(
+          startDateTime,
+          endDateTime,
+          booking.startTime,
+          booking.endTime
+        )
+      );
+
+      if (!hasOverlap) {
+        availableVehicles.push(vehicle);
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Available vehicles retrieved successfully',
+      data: {
+        vehicles: availableVehicles,
+        estimatedRideDurationHours,
+        searchCriteria: {
+          capacityRequired: parseInt(capacityRequired),
+          fromPincode,
+          toPincode,
+          startTime: startDateTime,
+          endTime: endDateTime
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error getting available vehicles:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+
+export const getAllVehicles = async (req, res) => {
+  try {
+    const vehicles = await Vehicle.find();
+    res.status(200).json({
+      success: true,
+      message: 'Vehicles retrieved successfully',
+      data: vehicles
+    });
+  } catch (error) {
+    console.error('Error getting vehicles:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+export const getVehicleById = async (req, res) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.id);
+    if (!vehicle) {
+      return res.status(404).json({
+        success: false,
+        message: 'Vehicle not found'
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: 'Vehicle retrieved successfully',
+      data: vehicle
+    });
+  } catch (error) {
+    console.error('Error getting vehicle:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
