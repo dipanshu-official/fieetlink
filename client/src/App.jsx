@@ -1,26 +1,33 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
-import Header from './components/Header';
-import Login from './components/Login';
-import Register from './components/Register';
+import Header from './components/Header'; // If used, include in protected layout
+import Login from './pages/Login';
+import Register from './pages/Register';
 import Dashboard from './components/Dashboard';
+import AdminPage from './pages/AdminPage';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-gray-50">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+    <Router>
+      <Toaster position="top-right" />
+      <div className="min-h-screen bg-gray-50">
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin" element={<AdminPage />} />
+            {/* Redirect root "/" to /dashboard */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </div>
-      </Router>
-    </AuthProvider>
+          </Route>
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

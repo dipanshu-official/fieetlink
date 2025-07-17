@@ -6,7 +6,7 @@ import SkeletonLoader from './SkeletonLoader';
 
 
 export default function AdminVehicleManagement({
-  vehicles,
+
   onAddVehicle,
   onUpdateVehicle,
   onDeleteVehicle,
@@ -17,6 +17,35 @@ export default function AdminVehicleManagement({
 }) {
   const [editingId, setEditingId] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+   const [vehicles, setVehicles] = useState([
+      {
+        id: "1",
+        name: "Toyota Hiace",
+        capacity: 12,
+        type: "Van",
+        availableRoutes: ["110001", "110002", "110003"],
+        pricePerKm: 15,
+        isAvailable: true,
+      },
+      {
+        id: "2",
+        name: "Tata Winger",
+        capacity: 17,
+        type: "Minibus",
+        availableRoutes: ["110001", "110004", "110005"],
+        pricePerKm: 20,
+        isAvailable: true,
+      },
+      {
+        id: "3",
+        name: "Mahindra Bolero",
+        capacity: 7,
+        type: "Car",
+        availableRoutes: ["110002", "110003", "110006"],
+        pricePerKm: 12,
+        isAvailable: true,
+      },
+    ]);
   const [formData, setFormData] = useState({
     name: '',
     capacity: '',
@@ -47,6 +76,11 @@ export default function AdminVehicleManagement({
       pricePerKm: vehicle.pricePerKm.toString(),
       isAvailable: vehicle.isAvailable,
     });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
@@ -112,19 +146,19 @@ export default function AdminVehicleManagement({
               type="text"
               placeholder="Vehicle Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={handleChange}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="number"
               placeholder="Capacity"
               value={formData.capacity}
-              onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+              onChange={handleChange}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <select
               value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              onChange={handleChange}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Type</option>
@@ -137,14 +171,14 @@ export default function AdminVehicleManagement({
               type="number"
               placeholder="Price per KM"
               value={formData.pricePerKm}
-              onChange={(e) => setFormData({ ...formData, pricePerKm: e.target.value })}
+              onChange={handleChange}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="text"
               placeholder="Available Routes (comma-separated)"
               value={formData.availableRoutes}
-              onChange={(e) => setFormData({ ...formData, availableRoutes: e.target.value })}
+              onChange={handleChange}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 md:col-span-2"
             />
             <div className="flex items-center">
@@ -152,7 +186,7 @@ export default function AdminVehicleManagement({
                 type="checkbox"
                 id="isAvailable"
                 checked={formData.isAvailable}
-                onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+                onChange={handleChange}
                 className="mr-2"
               />
               <label htmlFor="isAvailable" className="text-sm text-gray-700">Available</label>

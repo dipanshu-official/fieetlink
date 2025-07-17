@@ -1,48 +1,65 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { UserPlus, Truck, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserPlus, Truck, Eye, EyeOff } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { registerAsync } from "../store/globalAction";
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: 'user' ,
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "user",
   });
+
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
-  const { register } = useAuth();
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
+    console.log("Form Data:", formData);
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError("Password must be at least 6 characters long");
       return;
     }
 
     setLoading(true);
 
     try {
-      const success = await register(formData.email, formData.password, formData.name, formData.role);
-      if (success) {
-        navigate('/dashboard');
-      } else {
-        setError('Email already exists');
+      const userData = {
+        username: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      };
+      const result = await dispatch(registerAsync(userData)).unwrap();
+      console.log("Registration successful:", result.data.token);
+      console.log("User Data:", userData.role);
+
+      if (result.data.token) {
+        localStorage.setItem("token", result.data.token);
       }
+
+      navigate(userData.role === "admin" ? "/admin" : "/dashboard");
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError(err?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -73,8 +90,9 @@ export default function Register() {
               </label>
               <input
                 type="text"
+                name="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="Enter your full name"
                 required
@@ -87,8 +105,9 @@ export default function Register() {
               </label>
               <input
                 type="email"
+                name="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="Enter your email"
                 required
@@ -100,8 +119,9 @@ export default function Register() {
                 Role
               </label>
               <select
+                name="role"
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
                 <option value="user">User</option>
@@ -115,9 +135,10 @@ export default function Register() {
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={handleChange}
                   className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   placeholder="Enter your password"
                   required
@@ -142,8 +163,9 @@ export default function Register() {
               </label>
               <input
                 type="password"
+                name="confirmPassword"
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="Confirm your password"
                 required
@@ -168,8 +190,11 @@ export default function Register() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link to="/login" className="text-green-600 hover:text-green-500 font-medium">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="text-green-600 hover:text-green-500 font-medium"
+              >
                 Sign in
               </Link>
             </p>

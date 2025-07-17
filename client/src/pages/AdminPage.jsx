@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Search, Calendar, Plus, Settings } from "lucide-react";
 import { useAsync } from "../hooks/useAsync";
-import SearchVehicles from "./SearchVehicles";
-import VehicleResults from "./VehicleResults";
-import BookingModal from "./BookingModal";
-import UserBookings from "./UserBookings";
-import AdminVehicleManagement from "./AdminVehicleManagement";
+import SearchVehicles from "../components/SearchVehicles";
+import VehicleResults from "../components/VehicleResults";
+import BookingModal from "../components/BookingModal";
+import UserBookings from "../components/UserBookings";
+import AdminVehicleManagement from "../components/AdminVehicleManagement";
 import { useSelector, useDispatch } from "react-redux";
 import { userDataSelector } from "../store/globalSelector";
-import { use } from "react";
 import { registerAsync } from "../store/globalAction";
 
 export default function Dashboard() {

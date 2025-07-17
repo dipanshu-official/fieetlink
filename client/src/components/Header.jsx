@@ -1,14 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Truck, LogOut, User } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
 
 export default function Header() {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
+
     navigate('/login');
   };
 
@@ -24,14 +22,14 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center text-sm text-gray-600">
               <User className="h-4 w-4 mr-2" />
-              <span>{user?.name}</span>
-              <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
+              <span>dipanshu</span>
+              {/* <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
                 user?.role === 'admin' 
                   ? 'bg-purple-100 text-purple-800' 
                   : 'bg-blue-100 text-blue-800'
               }`}>
-                {user?.role}
-              </span>
+               
+              </span> */}
             </div>
             
             <button

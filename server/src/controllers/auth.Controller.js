@@ -1,10 +1,9 @@
-import jwt from 'jsonwebtoken';
-import User from '../models/user.model.js';
-
+import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
 
 const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET || 'your-secret-key', {
-    expiresIn: '7d'
+  return jwt.sign({ userId }, process.env.JWT_SECRET || "your-secret-key", {
+    expiresIn: "7d",
   });
 };
 
@@ -13,14 +12,12 @@ export const register = async (req, res) => {
     const { username, email, password, role } = req.body;
 
     // Check if user already exists
-    const existingUser = await User.findOne({
-      $or: [{ email }, { username }]
-    });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(409).json({
         success: false,
-        message: 'User already exists with this email or username'
+        message: "User already exists with this email or username",
       });
     }
 
@@ -29,7 +26,7 @@ export const register = async (req, res) => {
       username,
       email,
       password,
-      role: role || 'user'
+      role: role || "user",
     });
 
     await user.save();
@@ -43,32 +40,28 @@ export const register = async (req, res) => {
       username: user.username,
       email: user.email,
       role: user.role,
-      isActive: user.isActive
+      isActive: user.isActive,
     };
 
     res.status(201).json({
       success: true,
-      message: 'User registered successfully',
+      message: "User registered successfully",
       data: {
         user: userResponse,
-        token
-      }
+        token,
+      },
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error("Registration error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
 };
 
-
 export const login = async (req, res) => {
   try {
-    const { error } = validateLogin(req.body);
-   
-
     const { email, password } = req.body;
 
     // Find user and include password for comparison
@@ -76,7 +69,7 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: "Invalid credentials",
       });
     }
 
@@ -84,7 +77,7 @@ export const login = async (req, res) => {
     if (!user.isActive) {
       return res.status(401).json({
         success: false,
-        message: 'Account is deactivated'
+        message: "Account is deactivated",
       });
     }
 
@@ -93,7 +86,7 @@ export const login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: "Invalid credentials",
       });
     }
 
@@ -106,23 +99,22 @@ export const login = async (req, res) => {
       username: user.username,
       email: user.email,
       role: user.role,
-      isActive: user.isActive
+      isActive: user.isActive,
     };
 
     res.status(200).json({
       success: true,
-      message: 'Login successful',
+      message: "Login successful",
       data: {
         user: userResponse,
-        token
-      }
+        token,
+      },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
 };
-
