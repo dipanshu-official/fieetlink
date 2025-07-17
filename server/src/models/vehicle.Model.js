@@ -15,7 +15,8 @@ const vehicleSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 2
-  }
+  },
+  
 }, {
   timestamps: true
 });

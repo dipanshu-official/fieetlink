@@ -7,5 +7,5 @@ export const globalstate = (state) => state.global;
 // Memoized selector to get the user
 export const userDataSelector = createSelector(
   [globalstate],
-  (global) => global.user
+  (global) => global.userProfile
 );

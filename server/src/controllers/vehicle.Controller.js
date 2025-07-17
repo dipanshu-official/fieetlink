@@ -4,21 +4,13 @@ import Booking from "../models/booking.Model.js";
 
 export const addVehicle = async (req, res) => {
   try {
-    const { error } = validateVehicle(req.body);
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: 'Validation error',
-        details: error.details[0].message
-      });
-    }
-
     const { name, capacityKg, tyres } = req.body;
 
     const vehicle = new Vehicle({
       name,
       capacityKg,
-      tyres
+      tyres,
+    
     });
 
     const savedVehicle = await vehicle.save();

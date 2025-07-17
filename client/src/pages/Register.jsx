@@ -57,7 +57,7 @@ export default function Register() {
         localStorage.setItem("token", result.data.token);
       }
 
-      navigate(userData.role === "admin" ? "/admin" : "/dashboard");
+      navigate(userData.role === "admin" ? "/admin" : "/user");
     } catch (err) {
       setError(err?.message || "Registration failed");
     } finally {

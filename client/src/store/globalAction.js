@@ -56,15 +56,62 @@ export const loginAsync = createAsyncThunk(
   }
 );
 
-// logout user
-export const logoutAsync = createAsyncThunk(
-  "global/logout",
+// get user profile
+export const getUserProfileAsync = createAsyncThunk(
+  "global/getUserProfile",
   async (_, { rejectWithValue }) => {
     try {
-      localStorage.removeItem("token");
-      return { success: true };
+      const response = await axiosInstance.get("/auth/profile", {
+        headers: getAuthHeader(),
+      });
+      return response.data;
     } catch (error) {
-      return rejectWithValue({ message: "Logout failed" });
+      return rejectWithValue(
+        error?.response?.data || { message: "Something went wrong" }
+      );
     }
   }
 );
+
+// Add vehicle
+export const addVehicleAsync = createAsyncThunk(
+  "global/addVehicle",
+  async (vehicleData, { rejectWithValue }) => {
+    const { name, capacityKg, tyres } = vehicleData;
+    if (!name || !capacityKg || !tyres) {
+      return rejectWithValue({ message: "All fields are required" });
+    }
+
+    try {
+      const response = await axiosInstance.post("/vehicles", vehicleData, {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    }
+    catch (error) {
+      return rejectWithValue(
+        error?.response?.data || { message: "Something went wrong" }
+      );
+    }
+  }
+);
+
+// Get available vehicles
+export const getAvailableVehiclesAsync = createAsyncThunk(
+  "global/getAvailableVehicles",
+  async (queryParams, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/vehicles/available", {
+        params: queryParams,
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data || { message: "Something went wrong" }
+      );
+    }
+  }
+);
+
+

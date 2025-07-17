@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Truck, LogOut, User } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useSelector , useDispatch } from 'react-redux';
+import { userDataSelector } from '../store/globalSelector';
+import { getUserProfileAsync } from '../store/globalAction';
+
 
 export default function Header() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector(userDataSelector); // Assuming user data is stored in global state
+  console.log("User Data:", user);
+
+  useEffect(() => {
+    dispatch(getUserProfileAsync());
+  },[dispatch]);
 
   const handleLogout = () => {
-
+    localStorage.removeItem("token");
     navigate('/login');
+    toast.success("Logged out successfully");
   };
 
   return (
@@ -22,14 +35,14 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center text-sm text-gray-600">
               <User className="h-4 w-4 mr-2" />
-              <span>dipanshu</span>
-              {/* <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
+              <span>{user?.username}</span>
+              <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
                 user?.role === 'admin' 
                   ? 'bg-purple-100 text-purple-800' 
                   : 'bg-blue-100 text-blue-800'
               }`}>
                
-              </span> */}
+              </span>
             </div>
             
             <button

@@ -1,26 +1,17 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { LogIn, Truck, Eye, EyeOff } from 'lucide-react';
-import { useDispatch } from 'react-redux';
-import { loginAsync } from '../store/globalAction';
-
-// Simulated login function (replace with your real API call)
-const login = async (email, password) => {
-  if (email === 'admin@fleet.com' && password === 'admin123') {
-    return { success: true, role: 'admin' };
-  } else if (email === 'user@fleet.com' && password === 'user123') {
-    return { success: true, role: 'user' };
-  }
-  return { success: false };
-};
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { LogIn, Truck, Eye, EyeOff } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { loginAsync } from "../store/globalAction";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -33,23 +24,26 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
-    
 
     try {
-      const response = await dispatch(loginAsync(formData)).unwrap();
-      if (response.success) {
-        if (response.role === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/dashboard');
-        }
-      } else {
-        setError('Invalid email or password');
+      const userData = {
+        email: formData.email,
+        password: formData.password,
+      };
+      const response = await dispatch(loginAsync(userData)).unwrap();
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
       }
+      navigate(response.data.user.role === "admin" ? "/admin" : "/user");
+      console.log(
+        "Navigating to:",
+        response.data.user.role === "admin" ? "/admin" : "/user"
+      );
+      toast.success("Login successful");
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -95,7 +89,7 @@ export default function Login() {
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
@@ -135,19 +129,14 @@ export default function Login() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-blue-600 hover:text-blue-500 font-medium">
+              Don't have an account?{" "}
+              <Link
+                to="/register"
+                className="text-blue-600 hover:text-blue-500 font-medium"
+              >
                 Sign up
               </Link>
             </p>
-          </div>
-
-          <div className="mt-6 p-4 bg-gray-50 rounded-md">
-            <p className="text-sm text-gray-600 mb-2">Demo Accounts:</p>
-            <div className="text-xs space-y-1">
-              <p><strong>Admin:</strong> admin@fleet.com / admin123</p>
-              <p><strong>User:</strong> user@fleet.com / user123</p>
-            </div>
           </div>
         </div>
       </div>

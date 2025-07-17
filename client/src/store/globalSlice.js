@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { registerAsync } from "./globalAction";
+import { getUserProfileAsync, registerAsync } from "./globalAction";
 
 const initialState = {
   user: [],
-  
+  userProfile: [],
   loading: false,
   error: null,
 };
@@ -23,11 +23,12 @@ const globalSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(registerAsync.fulfilled, (state, action) => {
-        state.user = action.payload;
-      })
-     
+    builder.addCase(registerAsync.fulfilled, (state, action) => {
+      state.user = action.payload;
+    });
+    builder.addCase(getUserProfileAsync.fulfilled, (state, action) => {
+      state.userProfile = action.payload.data;
+    });
   },
 });
 

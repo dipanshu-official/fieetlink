@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import Dashboard from './components/Dashboard';
 import AdminPage from './pages/AdminPage';
 import { Toaster } from 'react-hot-toast';
+import UserPage from './pages/UserPage';
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/user" element={<UserPage />} />
             <Route path="/admin" element={<AdminPage />} />
             {/* Redirect root "/" to /dashboard */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
