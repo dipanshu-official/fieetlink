@@ -11,7 +11,6 @@ export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector(userDataSelector); // Assuming user data is stored in global state
-  console.log("User Data:", user);
 
   useEffect(() => {
     dispatch(getUserProfileAsync());

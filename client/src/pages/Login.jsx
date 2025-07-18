@@ -37,10 +37,7 @@ export default function Login() {
         localStorage.setItem("token", response.data.token);
       }
       navigate(response.data.user.role === "admin" ? "/admin" : "/user");
-      console.log(
-        "Navigating to:",
-        response.data.user.role === "admin" ? "/admin" : "/user"
-      );
+     
       toast.success("Login successful");
     } catch (err) {
       setError("Login failed. Please try again.");

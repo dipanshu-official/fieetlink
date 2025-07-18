@@ -1,5 +1,4 @@
 import { createSelector } from "@reduxjs/toolkit";  
-import { useSelector } from "react-redux";
 
 // Selector to get the user from the global state
 export const globalstate = (state) => state.global;
@@ -8,4 +7,9 @@ export const globalstate = (state) => state.global;
 export const userDataSelector = createSelector(
   [globalstate],
   (global) => global.userProfile
+);
+
+export const vehicleDataSelector = createSelector(
+  [globalstate],
+  (global) => global.allvehicles
 );

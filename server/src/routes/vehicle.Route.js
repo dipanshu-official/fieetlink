@@ -1,24 +1,20 @@
-import express from 'express';
+import express from "express";
 import {
   addVehicle,
   getAvailableVehicles,
   getAllVehicles,
   getVehicleById,
   updateVehicle,
-  deleteVehicle
-} from '../controllers/vehicle.Controller.js';
+  deleteVehicle,
+} from "../controllers/vehicle.Controller.js";
+import { authenticate } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
-
-router.post('/', addVehicle);
-
-router.get('/available', getAvailableVehicles);
-
-router.get('/', getAllVehicles);
-
-router.get('/:id', getVehicleById);
-
+router.post("/", authenticate, addVehicle);
+router.get("/available", authenticate, getAvailableVehicles);
+router.get("/", authenticate, getAllVehicles);
+router.get("/:id", authenticate, getVehicleById);
 router.put("/:id", updateVehicle);
-router.delete("/:id", deleteVehicle);
+router.delete("/:id", authenticate, deleteVehicle);
 
 export default router;

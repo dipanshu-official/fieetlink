@@ -3,7 +3,7 @@ import axiosInstance from "../api/axiosInstance";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
- 
+
   return {
     Authorization: `Bearer ${token}`,
   };
@@ -31,7 +31,6 @@ export const registerAsync = createAsyncThunk(
     }
   }
 );
-
 
 // login user
 export const loginAsync = createAsyncThunk(
@@ -87,8 +86,7 @@ export const addVehicleAsync = createAsyncThunk(
         headers: getAuthHeader(),
       });
       return response.data;
-    }
-    catch (error) {
+    } catch (error) {
       return rejectWithValue(
         error?.response?.data || { message: "Something went wrong" }
       );
@@ -114,4 +112,45 @@ export const getAvailableVehiclesAsync = createAsyncThunk(
   }
 );
 
+// Get all vehicles
+export const getAllVehicles = createAsyncThunk(
+  "global/getAllVehicles",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/vehicles", {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data || { message: "Something went wrong" }
+      );
+    }
+  }
+);
 
+// update vehicles
+export const updateVehiclesAsync  = createAsyncThunk(
+  'vehicles/updateVehiclesAsync',
+  async ({ id, vehicleData }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put(`/vehicles/${id}`, vehicleData);
+      return response.data.data// return updated vehicle
+    } catch (err) {
+      return rejectWithValue(err.response?.data || 'Server error');
+    }
+  }
+);
+
+// delete vehicles
+export const deleteVehiclesAsync  = createAsyncThunk(
+  "vehicles/deleteVehiclesAsync",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(`/vehicles/${id}`);
+      return id; // returning deleted vehicle
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);

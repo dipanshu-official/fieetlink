@@ -14,42 +14,13 @@ import { registerAsync } from "../store/globalAction";
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("search");
 
-  const [vehicles, setVehicles] = useState([
-    {
-      id: "1",
-      name: "Toyota Hiace",
-      capacity: 12,
-      type: "Van",
-      availableRoutes: ["110001", "110002", "110003"],
-      pricePerKm: 15,
-      isAvailable: true,
-    },
-    {
-      id: "2",
-      name: "Tata Winger",
-      capacity: 17,
-      type: "Minibus",
-      availableRoutes: ["110001", "110004", "110005"],
-      pricePerKm: 20,
-      isAvailable: true,
-    },
-    {
-      id: "3",
-      name: "Mahindra Bolero",
-      capacity: 7,
-      type: "Car",
-      availableRoutes: ["110002", "110003", "110006"],
-      pricePerKm: 12,
-      isAvailable: true,
-    },
-  ]);
+ 
 
   const user = useSelector(userDataSelector);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(registerAsync());
   }, [dispatch]);
-  console.log("user in dashboard", user);
 
   const [searchResults, setSearchResults] = useState([]);
   const [bookings, setBookings] = useState([]);
@@ -67,40 +38,11 @@ export default function Dashboard() {
   const [deletingVehicle, setDeletingVehicle] = useState(null);
   const [cancellingBooking, setCancellingBooking] = useState(null);
 
-  const handleAddVehicle = async (vehicleData) => {
-    await addVehicleAsync.execute(async () => {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+ 
 
-      const newVehicle = {
-        ...vehicleData,
-        id: Date.now().toString(),
-      };
-      setVehicles([...vehicles, newVehicle]);
-    });
-  };
+ 
 
-  const handleUpdateVehicle = async (id, vehicleData) => {
-    await updateVehicleAsync.execute(async () => {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      setVehicles(
-        vehicles.map((v) => (v.id === id ? { ...vehicleData, id } : v))
-      );
-    });
-  };
-
-  const handleDeleteVehicle = async (id) => {
-    setDeletingVehicle(id);
-    await deleteVehicleAsync.execute(async () => {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setVehicles(vehicles.filter((v) => v.id !== id));
-    });
-    setDeletingVehicle(null);
-  };
 
   const handleSearch = async (criteria) => {
     setSearchCriteria(criteria);
@@ -141,32 +83,6 @@ export default function Dashboard() {
     setSelectedVehicle(vehicle);
   };
 
-  const handleConfirmBooking = async (bookingData) => {
-    await bookingAsync.execute(async () => {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      const newBooking = {
-        ...bookingData,
-        id: Date.now().toString(),
-      };
-      setBookings([...bookings, newBooking]);
-    });
-    setSelectedVehicle(null);
-  };
-
-  const handleCancelBooking = async (id) => {
-    setCancellingBooking(id);
-    await cancelBookingAsync.execute(async () => {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setBookings(
-        bookings.map((b) => (b.id === id ? { ...b, status: "cancelled" } : b))
-      );
-    });
-    setCancellingBooking(null);
-  };
 
   const tabs =
     user?.role === "admin"
@@ -207,8 +123,7 @@ export default function Dashboard() {
         {activeTab === "search" && (
           <>
             <SearchVehicles
-              onSearch={handleSearch}
-              loading={searchAsync.loading}
+              
             />
             <VehicleResults
               results={searchResults}

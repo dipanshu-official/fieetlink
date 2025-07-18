@@ -28,7 +28,6 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    console.log("Form Data:", formData);
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
@@ -50,8 +49,7 @@ export default function Register() {
         role: formData.role,
       };
       const result = await dispatch(registerAsync(userData)).unwrap();
-      console.log("Registration successful:", result.data.token);
-      console.log("User Data:", userData.role);
+    
 
       if (result.data.token) {
         localStorage.setItem("token", result.data.token);
